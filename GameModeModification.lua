@@ -17,8 +17,20 @@ local function _OnLevelLayerInclusion(p_Instance)
 	local s_Criteria = p_Instance.criteria[1]
 	s_Criteria:MakeWritable()
 
-	for _, l_Name in pairs(AllGameModeNames) do
-		s_Criteria.options:add(l_Name)
+	for l_Name, _ in pairs(GameModeModificationConfig.aliasVersionedNames) do
+		local s_Contains = false
+
+		-- check if the gamemode exists already
+		for _, l_Mode in pairs(s_Criteria.options) do
+			if l_Mode == l_Name then
+				s_Contains = true
+				break
+			end
+		end
+
+		if not s_Contains then
+			s_Criteria.options:add(l_Name)
+		end
 	end
 end
 
@@ -29,9 +41,20 @@ local function _PatchLevelDescriptionAsset(p_Instance)
 	---@cast p_Instance LevelDescriptionAsset
 
 	local s_Category = p_Instance.categories[1]
+	if not s_Category then return end
 
-	if s_Category then
-		for _, l_Name in pairs(AllGameModeNames) do
+	for l_Name, _ in pairs(GameModeModificationConfig.aliasVersionedNames) do
+		local s_Contains = false
+
+		-- check if the gamemode exists already
+		for _, l_Mode in pairs(s_Category.mode) do
+			if l_Mode == l_Name then
+				s_Contains = true
+				break
+			end
+		end
+
+		if not s_Contains then
 			s_Category.mode:add(l_Name)
 		end
 	end
@@ -57,23 +80,35 @@ local function _OnGameModeSettings(p_Instance)
 	p_Instance:MakeWritable()
 	---@cast p_Instance GameModeSettings
 
-	for _, l_Name in pairs(PlainGameModeNames) do
-		local s_GameModeTeamSize = GameModeTeamSize()
-		s_GameModeTeamSize.playerCount = GameModeModificationConfig.TeamSize
-		s_GameModeTeamSize.squadSize = GameModeModificationConfig.SquadSize
+	local s_GameModeInformation = p_Instance.information[1]
+	for l_Name, _ in pairs(GameModeModificationConfig.aliasNames) do
+		local s_Contains = false
 
-		local s_GameModeSize = GameModeSize()
-		s_GameModeSize.forceSquad = true
-		s_GameModeSize.metaIdentifier = l_Name
-		s_GameModeSize.name = l_Name
-		s_GameModeSize.shortName = l_Name
-		s_GameModeSize.roundsPerMap = GameModeModificationConfig.RoundsPerMap
-		s_GameModeSize.teams:add(s_GameModeTeamSize)
-		s_GameModeSize.teams:add(s_GameModeTeamSize)
-		s_GameModeSize.teams:add(s_GameModeTeamSize)
+		-- check if the gamemode exists already
+		for _, l_Size in pairs(s_GameModeInformation.sizes) do
+			if l_Size.name == l_Name then
+				s_Contains = true
+				break
+			end
+		end
 
-		local s_GameModeInformation = p_Instance.information[1]
-		s_GameModeInformation.sizes:add(s_GameModeSize)
+		if not s_Contains then
+			local s_GameModeTeamSize = GameModeTeamSize()
+			s_GameModeTeamSize.playerCount = GameModeModificationConfig.TeamSize
+			s_GameModeTeamSize.squadSize = GameModeModificationConfig.SquadSize
+
+			local s_GameModeSize = GameModeSize()
+			s_GameModeSize.forceSquad = true
+			s_GameModeSize.metaIdentifier = l_Name
+			s_GameModeSize.name = l_Name
+			s_GameModeSize.shortName = l_Name
+			s_GameModeSize.roundsPerMap = GameModeModificationConfig.RoundsPerMap
+			s_GameModeSize.teams:add(s_GameModeTeamSize)
+			s_GameModeSize.teams:add(s_GameModeTeamSize)
+			s_GameModeSize.teams:add(s_GameModeTeamSize)
+
+			s_GameModeInformation.sizes:add(s_GameModeSize)
+		end
 	end
 end
 

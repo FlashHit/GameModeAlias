@@ -38,6 +38,13 @@ local m_CurrentGameModeAliasMap
 
 ---@param p_Partition DatabasePartition
 local function _TweakLevel(p_Partition)
+	local s_LevelName = SharedUtils:GetLevelName():gsub(".*/", "")
+	local s_LevelVanillaAlias = GameModeModificationConfig.vanillaToAlias[s_LevelName]
+
+	if not s_LevelVanillaAlias then
+		return
+	end
+
 	for _, l_Instance in ipairs(p_Partition.instances) do
 		-- Filter for all SubWorldInclusionSetting
 		-- These contain the gamemode name to check
@@ -47,10 +54,10 @@ local function _TweakLevel(p_Partition)
 			-- check all gamemode names and search for ConquestLarge0 or ConquestAssaultLarge0
 			for _, l_GameModeName in ipairs(l_Instance.enabledOptions) do
 				-- if ConquestLarge0 or ConquestAssaultLarge0 exists we want to add our custom gamemode names
-				if GameModeVanillaAliasMap[l_GameModeName] then
+				if s_LevelVanillaAlias[l_GameModeName] then
 					l_Instance:MakeWritable()
 
-					for _, l_Name in pairs(GameModeVanillaAliasMap[l_GameModeName]) do
+					for _, l_Name in pairs(s_LevelVanillaAlias[l_GameModeName]) do
 						l_Instance.enabledOptions:add(l_Name)
 					end
 
@@ -61,11 +68,13 @@ local function _TweakLevel(p_Partition)
 	end
 end
 
+---@param p_LevelName string
 ---@param p_GameMode string
 ---@return boolean isValid
-local function _IsGameModeValid(p_GameMode)
-	m_CurrentGameModeAliasMap = GameModeAliasVanillaMap[p_GameMode]
-	return GameModeAliasVanillaMap[p_GameMode] ~= nil
+local function _IsGameModeValid(p_LevelName, p_GameMode)
+	local s_LevelAlias = GameModeModificationConfig.aliasToVanilla[p_LevelName]
+	m_CurrentGameModeAliasMap = s_LevelAlias and s_LevelAlias[p_GameMode] or nil
+	return s_LevelAlias and s_LevelAlias[p_GameMode] ~= nil
 end
 
 ---@param p_HookCtx HookContext
@@ -73,17 +82,16 @@ end
 ---@param p_Compartment ResourceCompartment|integer
 function LevelModifications.OnLoadBundles(p_HookCtx, p_Bundles, p_Compartment)
 	if p_Compartment == ResourceCompartment.ResourceCompartment_Game then
+		local s_LevelName = SharedUtils:GetLevelName():gsub(".*/", "")
+		---@cast s_LevelName -nil
 		local s_GameMode = SharedUtils:GetCurrentGameMode()
 		---@cast s_GameMode -nil
 
-		if not _IsGameModeValid(s_GameMode) then
+		if not _IsGameModeValid(s_LevelName, s_GameMode) then
 			return
 		end
 
-		local s_LevelName = SharedUtils:GetLevelName()
-		---@cast s_LevelName -nil
-
-		m_CurrentLevelConfig = LevelModificationConfig[s_LevelName:gsub(".*/", "")]
+		m_CurrentLevelConfig = LevelModificationConfig[s_LevelName]
 
 		if not m_CurrentLevelConfig then
 			error(string.format("LevelConfig not found for %s", s_LevelName))
