@@ -101,7 +101,7 @@ LevelModificationConfig = {
 		}
 	},
 	XP2_Skybar = {
-		MainPartitionGuid = Guid("F2B8C98F-F166-48CA-A63C-E7235DBF243F"),
+		MainPartitionGuid = Guid("2DF41167-0BAB-11E1-AA4E-EFBA5D767A10"),
 		Sub = {
 			{
 				PartitionGuid = Guid("F2B8C98F-F166-48CA-A63C-E7235DBF243F"),
