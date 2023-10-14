@@ -64,7 +64,6 @@ function _ExcludePatch(p_Partition)
 			end
 		end
 	end
-
 end
 
 ---@param p_Partition DatabasePartition
@@ -88,7 +87,7 @@ function _Exclude(p_Partition)
 	if m_LazyLoadedCount == 0 then _ExcludePatch(p_Partition) end
 end
 
-local function _Patch(p_Partition, p_Info)
+local function _PatchInternal(p_Partition, p_Info)
 	local s_LevelLayerInclusion = ResourceManager:LookupDataContainer(ResourceCompartment.ResourceCompartment_Static, "LevelLayerInclusion"):Cast()
 	---@cast s_LevelLayerInclusion WorldPartInclusion
 
@@ -137,6 +136,12 @@ local function _Patch(p_Partition, p_Info)
 	end
 end
 
+local function _Patch(p_Partition, p_Info)
+	for _, l_Info in ipairs(p_Info) do
+		_PatchInternal(p_Partition, l_Info)
+	end
+end
+
 ---@param p_Partition DatabasePartition
 function DynamicBundleLoader:OnLevelDataLoaded(p_Partition)
 	local s_PrimaryInstance = LevelData(p_Partition.primaryInstance)
@@ -162,12 +167,16 @@ end
 ---@param gameModes string[]
 ---@param bundleName string
 function DynamicBundleLoader:Add(levelName, gameModes, bundleName)
-	self.info[levelName] = {
+	if not self.info[levelName] then
+		self.info[levelName] = {}
+		local s_LevelModificationConfig = LevelModificationConfig[levelName:gsub(".*/", "")]
+		ResourceManager:RegisterPartitionLoadHandler(s_LevelModificationConfig.MainPartitionGuid, self, self.OnLevelDataLoaded)
+	end
+
+	table.insert(self.info[levelName], {
 		gameModes = gameModes,
 		bundleName = bundleName
-	}
-	local s_LevelModificationConfig = LevelModificationConfig[levelName:gsub(".*/", "")]
-	ResourceManager:RegisterPartitionLoadHandler(s_LevelModificationConfig.MainPartitionGuid, self, self.OnLevelDataLoaded)
+	})
 end
 
 DynamicBundleLoader = DynamicBundleLoader()
