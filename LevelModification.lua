@@ -32,6 +32,7 @@ local LevelModifications = {}
 require("__shared/submodules/GameModeAlias/GameModeModificationConfig")
 require("__shared/submodules/GameModeAlias/GameModeModification")
 require("__shared/submodules/GameModeAlias/LevelModificationConfig")
+require("__shared/submodules/GameModeAlias/DynamicBundleLoader")
 
 local m_CurrentLevelConfig
 local m_CurrentGameModeAliasMap
