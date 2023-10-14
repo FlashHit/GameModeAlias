@@ -45,18 +45,47 @@ local function _GetHighestIndexInPartition(p_Partition)
 end
 
 ---@param p_Partition DatabasePartition
-function _Exclude(p_Partition)
+function _ExcludePatch(p_Partition)
 	local s_PrimaryInstance = SubWorldData(p_Partition.primaryInstance)
-	print(s_PrimaryInstance.name)
+	s_PrimaryInstance:MakeWritable()
 
+	for i = #s_PrimaryInstance.objects, 1, -1 do
+		if not s_PrimaryInstance:Is("SubWorldReferenceObjectData") then
+			local s_Object = _G[s_PrimaryInstance.objects[i].typeInfo.name](s_PrimaryInstance.objects[i])
+
+			if s_Object.blueprint then
+				s_Object:MakeWritable()
+				s_Object.excluded = true
+				s_PrimaryInstance.objects:erase(i)
+			elseif s_Object.enabled then
+				s_Object:MakeWritable()
+				s_Object.enabled = false
+				s_PrimaryInstance.objects:erase(i)
+			end
+		end
+	end
+
+end
+
+---@param p_Partition DatabasePartition
+function _Exclude(p_Partition)
+	local s_PrimaryInstance = LevelData(p_Partition.primaryInstance)
+	---@cast s_PrimaryInstance LevelData
+	local m_LazyLoadedCount = 0
 	for _, l_Object in ipairs(s_PrimaryInstance.objects) do
 		l_Object = _G[l_Object.typeInfo.name](l_Object)
 
-		if l_Object.blueprint then
-			l_Object:MakeWritable()
-			l_Object.excluded = true
+		if l_Object.blueprint and l_Object.blueprint.isLazyLoaded then
+			m_LazyLoadedCount = m_LazyLoadedCount + 1
+
+			l_Object.blueprint:RegisterLoadHandlerOnce(function(p_Instance)
+				m_LazyLoadedCount = m_LazyLoadedCount - 1
+				if m_LazyLoadedCount == 0 then _ExcludePatch(p_Partition) end
+			end)
 		end
 	end
+
+	if m_LazyLoadedCount == 0 then _ExcludePatch(p_Partition) end
 end
 
 local function _Patch(p_Partition, p_Info)
