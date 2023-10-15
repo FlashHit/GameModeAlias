@@ -18,6 +18,9 @@ end
 
 function DynamicBundleLoader:__init()
 	self.info = {}
+	---@type ContainerCallback[]
+	self.containerCallbacks = {}
+	Events:Subscribe('ResourceManager:ClearCompartment', self, self.OnClearCompartment)
 end
 
 -- Returns the highest index in this partition
@@ -87,7 +90,7 @@ function _Exclude(p_Partition)
 	if m_LazyLoadedCount == 0 then _ExcludePatch(p_Partition) end
 end
 
-local function _PatchInternal(p_Partition, p_Info)
+function DynamicBundleLoader:PatchInternal(p_Partition, p_Info)
 	local s_LevelLayerInclusion = ResourceManager:LookupDataContainer(ResourceCompartment.ResourceCompartment_Static, "LevelLayerInclusion"):Cast()
 	---@cast s_LevelLayerInclusion WorldPartInclusion
 
@@ -132,13 +135,13 @@ local function _PatchInternal(p_Partition, p_Info)
 
 	local s_ExcludeConfig = LevelModificationConfig[p_Info.bundleName:gsub(".*/", "")]
 	if s_ExcludeConfig then
-		ResourceManager:RegisterPartitionLoadHandlerOnce(s_ExcludeConfig.MainPartitionGuid, _Exclude)
+		table.insert(self.containerCallbacks, ResourceManager:RegisterPartitionLoadHandler(s_ExcludeConfig.MainPartitionGuid, _Exclude))
 	end
 end
 
-local function _Patch(p_Partition, p_Info)
+function DynamicBundleLoader:Patch(p_Partition, p_Info)
 	for _, l_Info in ipairs(p_Info) do
-		_PatchInternal(p_Partition, l_Info)
+		self:PatchInternal(p_Partition, l_Info)
 	end
 end
 
@@ -155,12 +158,22 @@ function DynamicBundleLoader:OnLevelDataLoaded(p_Partition)
 
 			l_Object.blueprint:RegisterLoadHandlerOnce(function(p_Instance)
 				m_LazyLoadedCount = m_LazyLoadedCount - 1
-				if m_LazyLoadedCount == 0 then _Patch(p_Partition, self.info[s_PrimaryInstance.name]) end
+				if m_LazyLoadedCount == 0 then self:Patch(p_Partition, self.info[s_PrimaryInstance.name]) end
 			end)
 		end
 	end
 
-	if m_LazyLoadedCount == 0 then _Patch(p_Partition, self.info[s_PrimaryInstance.name]) end
+	if m_LazyLoadedCount == 0 then self:Patch(p_Partition, self.info[s_PrimaryInstance.name]) end
+end
+
+---@param p_Compartment ResourceCompartment|integer
+function DynamicBundleLoader:OnClearCompartment(p_Compartment)
+	if p_Compartment == ResourceCompartment.ResourceCompartment_Game then
+		for _, l_ContainerCallback in ipairs(self.containerCallbacks) do
+			l_ContainerCallback:Deregister()
+		end
+		self.containerCallbacks = {}
+	end
 end
 
 ---@param levelName string
