@@ -53,9 +53,9 @@ function _ExcludePatch(p_Partition)
 	s_PrimaryInstance:MakeWritable()
 
 	for i = #s_PrimaryInstance.objects, 1, -1 do
-		if not s_PrimaryInstance:Is("SubWorldReferenceObjectData") then
-			local s_Object = _G[s_PrimaryInstance.objects[i].typeInfo.name](s_PrimaryInstance.objects[i])
+		local s_Object = _G[s_PrimaryInstance.objects[i].typeInfo.name](s_PrimaryInstance.objects[i])
 
+		if not s_Object:Is("SubWorldReferenceObjectData") then
 			if s_Object.blueprint then
 				s_Object:MakeWritable()
 				s_Object.excluded = true
