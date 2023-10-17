@@ -28,6 +28,10 @@ GameModeModificationConfig = {
 	vanillaToAlias = {}
 }
 
+---@param levelName string
+---@param gameMode string?
+---@param alias string
+---@param versions integer
 function GameModeModificationConfig.AddGameModeAlias(levelName, gameMode, alias, versions)
 	levelName = levelName:gsub(".*/", "")
 

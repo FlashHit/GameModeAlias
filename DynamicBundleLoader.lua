@@ -90,6 +90,8 @@ function _Exclude(p_Partition)
 	if m_LazyLoadedCount == 0 then _ExcludePatch(p_Partition) end
 end
 
+---@param p_Partition DatabasePartition
+---@param p_Info table
 function DynamicBundleLoader:PatchInternal(p_Partition, p_Info)
 	local s_LevelLayerInclusion = ResourceManager:LookupDataContainer(ResourceCompartment.ResourceCompartment_Static, "LevelLayerInclusion"):Cast()
 	---@cast s_LevelLayerInclusion WorldPartInclusion
@@ -139,6 +141,8 @@ function DynamicBundleLoader:PatchInternal(p_Partition, p_Info)
 	end
 end
 
+---@param p_Partition DatabasePartition
+---@param p_Info table
 function DynamicBundleLoader:Patch(p_Partition, p_Info)
 	for _, l_Info in ipairs(p_Info) do
 		self:PatchInternal(p_Partition, l_Info)
