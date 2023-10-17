@@ -26,9 +26,6 @@ THE SOFTWARE.
 -- The MapList file would have an entry like this: Levels/MP_001/MP_001 AdvanceAndSecureStd 1
 --------
 
----@class LevelModifications
-local LevelModifications = {}
-
 require("__shared/submodules/GameModeAlias/GameModeModificationConfig")
 require("__shared/submodules/GameModeAlias/GameModeModification")
 require("__shared/submodules/GameModeAlias/LevelModificationConfig")
@@ -81,7 +78,7 @@ end
 ---@param p_HookCtx HookContext
 ---@param p_Bundles string[]
 ---@param p_Compartment ResourceCompartment|integer
-function LevelModifications.OnLoadBundles(p_HookCtx, p_Bundles, p_Compartment)
+local function OnLoadBundles(p_HookCtx, p_Bundles, p_Compartment)
 	if p_Compartment == ResourceCompartment.ResourceCompartment_Game then
 		local s_LevelName = SharedUtils:GetLevelName():gsub(".*/", "")
 		---@cast s_LevelName -nil
@@ -117,4 +114,4 @@ function LevelModifications.OnLoadBundles(p_HookCtx, p_Bundles, p_Compartment)
 	end
 end
 
-return LevelModifications
+Hooks:Install("ResourceManager:LoadBundles", 1, OnLoadBundles)
