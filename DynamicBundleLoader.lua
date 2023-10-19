@@ -33,7 +33,7 @@ local function _GetHighestIndexInPartition(p_Partition)
 	for _, l_Instance in ipairs(p_Partition.instances) do
 		-- Filter for all instances that have an indexInBlueprint field
 		if l_Instance:Is("GameObjectData") then
-			l_Instance = l_Instance:Cast()
+			l_Instance = GameObjectData(l_Instance)
 			local s_Index = l_Instance.indexInBlueprint
 
 			-- Check if the index of this instance is higher then the highest we found so far
@@ -93,8 +93,9 @@ end
 ---@param p_Partition DatabasePartition
 ---@param p_Info table
 function DynamicBundleLoader:PatchInternal(p_Partition, p_Info)
-	local s_LevelLayerInclusion = ResourceManager:LookupDataContainer(ResourceCompartment.ResourceCompartment_Static, "LevelLayerInclusion"):Cast()
-	---@cast s_LevelLayerInclusion WorldPartInclusion
+	local s_LevelLayerInclusion = ResourceManager:LookupDataContainer(ResourceCompartment.ResourceCompartment_Static, "LevelLayerInclusion")
+	if not s_LevelLayerInclusion then return end
+	s_LevelLayerInclusion = WorldPartInclusion(s_LevelLayerInclusion)
 
 	local s_SubWorldInclusionSetting = SubWorldInclusionSetting(MathUtils:RandomGuid())
 	s_SubWorldInclusionSetting.criterion = s_LevelLayerInclusion.criteria[1]
