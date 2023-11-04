@@ -27,7 +27,6 @@ THE SOFTWARE.
 --------
 
 require("__shared/submodules/GameModeAlias/GameModeModificationConfig")
-require("__shared/submodules/GameModeAlias/GameModeModification")
 require("__shared/submodules/GameModeAlias/LevelModificationConfig")
 require("__shared/submodules/GameModeAlias/DynamicBundleLoader")
 
@@ -56,6 +55,7 @@ local function _TweakLevel(p_Partition)
 					l_Instance:MakeWritable()
 
 					for _, l_Name in pairs(s_LevelVanillaAlias[l_GameModeName]) do
+						-- TODO: make sure there are no entries with the same name.
 						l_Instance.enabledOptions:add(l_Name)
 					end
 
