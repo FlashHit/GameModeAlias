@@ -98,7 +98,7 @@ local function _OnGameModeSettings(p_Instance)
 			s_GameModeTeamSize.squadSize = GameModeModificationConfig.SquadSize
 
 			local s_GameModeSize = GameModeSize()
-			s_GameModeSize.forceSquad = true
+			s_GameModeSize.forceSquad = GameModeModificationConfig.ForceSquad
 			s_GameModeSize.metaIdentifier = l_Name
 			s_GameModeSize.name = l_Name
 			s_GameModeSize.shortName = l_Name

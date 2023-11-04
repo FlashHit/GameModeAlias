@@ -21,6 +21,7 @@ GameModeModificationConfig = {
 	SquadSize = 8,
 	TeamSize = 100,
 	RoundsPerMap = 1,
+	ForceSquad = false,
 
 	aliasNames = {},
 	aliasVersionedNames = {},
