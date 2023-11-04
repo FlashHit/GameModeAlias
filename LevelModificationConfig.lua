@@ -299,5 +299,59 @@ LevelModificationConfig = {
 				Names = { "ConquestSmall0", "ConquestLarge0" }
 			}
 		}
+	},
+	COOP_002 = {
+		MainPartitionGuid = Guid("B1BA4ED2-E692-11DF-8AB9-825AA2E1EF0A")
+	},
+	COOP_003 = {
+		MainPartitionGuid = Guid("3D86F044-C978-48CC-8BBB-97474DE4572D")
+	},
+	COOP_006 = {
+		MainPartitionGuid = Guid("23535E3D-E72F-11DF-99CA-879440EEBD7A")
+	},
+	COOP_007 = {
+		MainPartitionGuid = Guid("66606821-E69C-11DF-9B0E-AF9CA6E0236B")
+	},
+	COOP_009 = {
+		MainPartitionGuid = Guid("F94C5091-E69C-11DF-9B0E-AF9CA6E0236B")
+	},
+	COOP_010 = {
+		MainPartitionGuid = Guid("333BDB92-E69D-11DF-9B0E-AF9CA6E0236B")
+	},
+	SP_Bank = {
+		MainPartitionGuid = Guid("5119BCE8-E277-11DF-AC57-D4F216B966DB")
+	},
+	SP_Earthquake = {
+		MainPartitionGuid = Guid("C8D40579-CA37-11DF-B1FE-C90CED16BE7F")
+	},
+	SP_Earthquake2 = {
+		MainPartitionGuid = Guid("6FD69AE4-5B8A-11E0-BC14-D5B461CF665B")
+	},
+	SP_Finale = {
+		MainPartitionGuid = Guid("8DA3322E-3E60-11E0-BFEE-95DA3EB52033")
+	},
+	SP_Jet = {
+		MainPartitionGuid = Guid("3C0DE194-B689-11DF-B8D0-D42ED28AF832")
+	},
+	SP_New_York = {
+		MainPartitionGuid = Guid("936D5695-A989-4F39-B8C7-6404B0F55C5D")
+	},
+	SP_Paris = {
+		MainPartitionGuid = Guid("61417F2E-BCD9-11DF-A157-A17CBD8140DE")
+	},
+	SP_Sniper = {
+		MainPartitionGuid = Guid("DBCE4061-E2A4-11DF-A647-FE6A1B285059")
+	},
+	SP_Tank = {
+		MainPartitionGuid = Guid("A263A077-CA17-11DF-830F-E4337AA80D37")
+	},
+	SP_Tank_b = {
+		MainPartitionGuid = Guid("7662E9AF-091E-4A19-B7ED-751D083E7693")
+	},
+	SP_Valley = {
+		MainPartitionGuid = Guid("9B6EE657-5639-4A04-AA88-16E9E201806E")
+	},
+	SP_Villa = {
+		MainPartitionGuid = Guid("6B420080-18CB-11E0-B456-BF5782883243")
 	}
 }
